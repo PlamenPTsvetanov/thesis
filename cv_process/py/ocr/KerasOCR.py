@@ -1,6 +1,10 @@
+import keras_ocr
+
+
 class KerasOCR:
     @staticmethod
-    def ocr_with_keras_ocr(region, pipeline):
+    def ocr_with_keras_ocr(region):
+        pipeline = keras_ocr.pipeline.Pipeline()
         results = pipeline.recognize([region])
         text = KerasOCR.__get_formatted_text(results)
         return text, region

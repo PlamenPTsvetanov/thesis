@@ -34,6 +34,7 @@ class Training:
             f.write(config_text)
 
     def train_model(self):
+        self.__config_pipeline()
         training_script = os.path.join(meta.paths['APIMODEL_PATH'], 'research', 'object_detection', 'model_main_tf2.py')
         command = ("{} {} --model_dir={} --pipeline_config_path={} --num_train_steps=10000"
                    .format(sys.executable,
