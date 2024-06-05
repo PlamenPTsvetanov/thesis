@@ -1,11 +1,14 @@
-from object_detection.utils import config_util
-from object_detection.protos import pipeline_pb2
-from google.protobuf import text_format
 import os
-import tensorflow as tf
 import sys
 
+import tensorflow as tf
+from google.protobuf import text_format
+from object_detection.protos import pipeline_pb2
+from object_detection.utils import config_util
+
 from RecognitionSetup import Setup as meta
+
+
 class Training:
 
     @staticmethod

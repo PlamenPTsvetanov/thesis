@@ -1,5 +1,6 @@
-import cv2
 import os
+
+import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -12,7 +13,7 @@ class RLDeblur:
     def richardson_lucy_deconv(noisy_channel, psf, num_iter=20):
         return restoration.richardson_lucy(noisy_channel, psf[:, :, 0, 0], num_iter=num_iter)
 
-    def deblurr(self, path):
+    def deblurr(self, path, output_path, format):
         image = np.array(Image.open(path)).astype(np.float32)
 
         image /= 255.0
@@ -37,6 +38,7 @@ class RLDeblur:
 
         img = Image.fromarray(denoised)
 
-        new_path = os.path.join(os.path.split(path)[-1], os.path.basename(path) + "_pp")
+        new_path = os.path.join(output_path, "_deblur." + format)
 
         img.save(new_path)
+        return new_path

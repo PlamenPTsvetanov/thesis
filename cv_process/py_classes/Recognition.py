@@ -2,7 +2,6 @@ import os
 import re
 
 import cv2
-import matplotlib
 import numpy as np
 import tensorflow as tf
 from object_detection.builders import model_builder
@@ -11,9 +10,6 @@ from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as viz_utils
 
 from RecognitionSetup import Setup as meta
-
-matplotlib.use('TkAgg')
-from matplotlib import pyplot as plt
 
 
 class Recognition:
@@ -24,6 +20,7 @@ class Recognition:
 
         input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
 
+        print(os.getcwd())
         configs = config_util.get_configs_from_pipeline_file(meta.files['PIPELINE_CONFIG'])
         detection_model = model_builder.build(model_config=configs['model'], is_training=False)
 
@@ -89,4 +86,4 @@ class Recognition:
         text, region = self.__common_ocr(image, detections, detection_threshold, ocr_function)
         if type(text) == tuple:
             text = text[0]
-        print(self.__clear_text(text))
+        return self.__clear_text(text), region
