@@ -123,3 +123,7 @@ class Setup:
         print("Generating tf records...")
         self.__generate_tf_records()
         print("Setup is done...")
+
+if __name__ == "__main__":
+    recon = Setup()
+    recon.setup()

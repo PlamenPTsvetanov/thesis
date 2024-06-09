@@ -20,12 +20,12 @@ class Recognition:
 
         input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
 
-        print(os.getcwd())
         configs = config_util.get_configs_from_pipeline_file(meta.files['PIPELINE_CONFIG'])
         detection_model = model_builder.build(model_config=configs['model'], is_training=False)
 
         ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
-        ckpt.restore(os.path.join(meta.paths['CHECKPOINT_PATH'], 'ckpt-11')).expect_partial()
+        manager = tf.train.CheckpointManager(ckpt, meta.paths['CHECKPOINT_PATH'], max_to_keep=3)
+        ckpt.restore(os.path.join(meta.paths['CHECKPOINT_PATH'], manager.latest_checkpoint)).expect_partial()
 
         image, shapes = detection_model.preprocess(input_tensor)
         prediction_dict = detection_model.predict(image, shapes)
@@ -36,7 +36,6 @@ class Recognition:
                       for key, value in detections.items()}
         detections['num_detections'] = num_detections
 
-        # detection_classes should be ints.
         detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
 
         category_index = label_map_util.create_category_index_from_labelmap(meta.files['LABELMAP'])
@@ -55,8 +54,6 @@ class Recognition:
             min_score_thresh=.7,
             agnostic_mode=False)
 
-        # plt.imshow(cv2.cvtColor(image_np_with_detections, cv2.COLOR_BGR2RGB))
-        # plt.show()
 
         return image_np_with_detections, detections
 

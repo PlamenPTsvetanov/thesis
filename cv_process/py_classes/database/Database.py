@@ -44,30 +44,31 @@ class Database:
                 existing_camera = cursor.fetchone()
         return existing_camera
 
-    def insert_camera(self, camera):
-        sql = "INSERT INTO thesis.camera (name, folder_path, image_format) VALUES ('{}', '{}', '{}')".format(
-            camera.name, camera.folder_path, camera.image_format
-        )
+    def insert_placeholder_image(self, image_path):
+        sql = ("INSERT INTO thesis.image (license_plate_number, license_plate_image_path, full_image_path) "
+               + "VALUES ('-', '-', '{}') RETURNING id".format(image_path))
         with self.connection as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
+                last_id = cursor.fetchone()[0]
                 conn.commit()
+                return last_id
 
-    def delete_camera(self, camera):
-        sql = "DELETE from thesis.camera where name = '{}' and folder_path = '{}'".format(
-            camera.name, camera.folder_path
-        )
-        with self.connection as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                conn.commit()
-
-    def insert_image(self, image):
-        sql = ("INSERT INTO thesis.image (license_plate_number, license_plate_image_path, full_image_path, camera_id) "
-               + "VALUES ('{}', '{}', '{}', '{}')".format(
-                    image.license_plate_number, image.license_plate_image_path, image.full_image_path, image.camera_id
+    def update_image(self, image, id_to_use):
+        sql = (
+                "UPDATE thesis.image SET license_plate_number = '{}', license_plate_image_path = '{}', full_image_path = '{}', camera_id = '{}' where id = '{}'".format(
+                    image.license_plate_number, image.license_plate_image_path, image.full_image_path, image.camera_id, id_to_use
                 ))
+        print(sql)
         with self.connection as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
                 conn.commit()
+
+    def image_exists(self, image_path):
+        sql = ("SELECT * FROM thesis.image WHERE full_image_path = '{}'".format(image_path))
+        with self.connection as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                image = cursor.fetchone()
+        return image

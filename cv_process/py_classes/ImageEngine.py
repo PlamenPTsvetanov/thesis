@@ -12,34 +12,39 @@ from CameraEngine import CameraEngine
 from RLDeblur import RLDeblur
 from Recognition import Recognition
 from database.Database import Database
+from objects.CustomImage import CustomImage
 from ocr.EasyOCR import EasyOCR as easy
 from ocr.KerasOCR import KerasOCR as k
 from ocr.PyTesseractOCR import PyTesseractOCR as pyt
-from processes.CustomImage import CustomImage
 
 
 class ImageEngine:
-
     def recognize(self, path, ocr_func):
         print("Starting recognition...")
         camera_engine = CameraEngine()
 
         camera = camera_engine.fetch_camera(folder_path=path)
-        if camera is None:
-            camera = camera_engine.create_camera(folder_path=path)
 
         recon = Recognition()
 
         images = glob.glob(os.path.join(path, "*." + camera[6]))
 
+        db = Database()
+
         for image_path in images:
+            db_image = db.image_exists(image_path)
+            if db_image is None:
+                id_to_use = db.insert_placeholder_image(image_path)
+            else:
+                continue
+
             output_folder = os.path.join(path, str(uuid.uuid4()))
             os.mkdir(output_folder)
 
             img_format = camera[6]
             deblur = RLDeblur()
 
-            deblurred_path = deblur.deblurr(path=image_path, output_path=output_folder, format=img_format)
+            deblurred_path = deblur.deblur(path=image_path, output_path=output_folder, format=img_format)
 
             image_to_scan, detections = recon.scan_image(deblurred_path)
             text, region = recon.ocr(image_to_scan, detections, 0.8, ocr_func)
@@ -55,14 +60,13 @@ class ImageEngine:
             license_plate_number = text
             camera_id = camera[0]
 
-            image = CustomImage(license_plate_number, full_image_path, license_plate_image_path, camera_id)
-            db = Database()
-            db.insert_image(image)
+            image = CustomImage(license_plate_number, license_plate_image_path, full_image_path, camera_id)
+            db.update_image(image, id_to_use)
 
             os.remove(image_path)
 
     def cron_worker(self, path, func):
-        schedule.every(30).seconds.do(partial(self.recognize, path=path, ocr_func=func))
+        schedule.every(10).seconds.do(partial(self.recognize, path=path, ocr_func=func))
         while True:
             print("Running cron...")
             schedule.run_pending()

@@ -10,6 +10,7 @@ class Camera:
     def __init__(self, path):
         if self.folder_path is None:
             self.folder_path = path
+        print(self.folder_path)
         base = ET.parse(os.path.join(str(self.folder_path), "camera_config.xml"))
         self.name = base.getroot().find("name").text
         self.image_format = base.getroot().find("image_format").text

@@ -13,7 +13,7 @@ class RLDeblur:
     def richardson_lucy_deconv(noisy_channel, psf, num_iter=20):
         return restoration.richardson_lucy(noisy_channel, psf[:, :, 0, 0], num_iter=num_iter)
 
-    def deblurr(self, path, output_path, format):
+    def deblur(self, path, output_path, format):
         image = np.array(Image.open(path)).astype(np.float32)
 
         image /= 255.0

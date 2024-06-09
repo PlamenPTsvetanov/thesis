@@ -1,4 +1,3 @@
-import datetime
 import os
 import time
 
@@ -70,15 +69,12 @@ class GenerativeEngine:
         return input_image, real_image
 
     def random_jitter(self, input_image, real_image):
-        # Resizing to 286x286
         input_image, real_image = self.resize(input_image, real_image, 286, 286)
 
-        # Random cropping back to 256x256
         input_image, real_image = self.random_crop(input_image, real_image)
         input_image, real_image = self.random_crop(input_image, real_image)
 
         if tf.random.uniform(()) > 0.5:
-            # Random mirroring
             input_image = tf.image.flip_left_right(input_image)
             real_image = tf.image.flip_left_right(real_image)
 
@@ -253,8 +249,6 @@ class GenerativeEngine:
 
         return total_disc_loss
 
-    logdir = os.path.join(paths['LOG_PATH'], "fit/")
-    summary_writer = tf.summary.create_file_writer(logdir + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     def checkpoint(self, generator, discriminator):
         checkpoint_prefix = os.path.join(self.paths['CHECKPOINT_PATH'], "ckpt")
@@ -283,23 +277,9 @@ class GenerativeEngine:
         generator_optimizer.apply_gradients(zip(generator_gradients, generator.trainable_variables))
         discriminator_optimizer.apply_gradients(zip(discriminator_gradients, discriminator.trainable_variables))
 
-        # with summary_writer.as_default():
-        #     tf.summary.scalar('gen_total_loss', gen_total_loss, step=step // 1000)
-        #     tf.summary.scalar('gen_gan_loss', gen_gan_loss, step=step // 1000)
-        #     tf.summary.scalar('gen_l1_loss', gen_l1_loss, step=step // 1000)
-        #     tf.summary.scalar('disc_loss', disc_loss, step=step // 1000)
-        #
-        #     template = 'Step {}, gen_total_loss: {}, gen_gan_loss: {}, gen_l1_loss: {}, disc_loss: {}'
-        #     print(template.format(step,
-        #                           gen_total_loss,
-        #                           gen_gan_loss,
-        #                           gen_l1_loss,
-        #                           disc_loss))
-
     def fit(self, train_ds, test_ds, steps):
         example_input, example_target = next(iter(test_ds.take(1)))
         start = time.time()
-        gen_loss_weight = 0.001
         generator = self.Generator()
         discriminator = self.Discriminator()
 
@@ -317,7 +297,6 @@ class GenerativeEngine:
             if (step + 1) % 10 == 0:
                 print('.', end='', flush=True)
 
-            gen_loss_weight += 0.00001
             # Save (checkpoint) the model every 5k steps
             if (step + 1) % 5000 == 0:
                 checkpoint, chk_index = self.checkpoint(generator, discriminator)
