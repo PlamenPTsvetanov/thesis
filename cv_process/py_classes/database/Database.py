@@ -12,7 +12,7 @@ class Database:
 
     @staticmethod
     def __properties():
-        base = ET.parse(os.path.join("py_classes", "database", "db_connection.xml"))
+        base = ET.parse(os.path.join(os.getcwd(), "cv_process", "py_classes", "database", "db_connection.xml"))
         root = base.getroot()
 
         properties = {
