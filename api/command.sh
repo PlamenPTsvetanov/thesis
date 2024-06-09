@@ -10,10 +10,10 @@ PYTHON_SCRIPT="/e/00_git_thesis/cv_process/py_classes/ImageEngine.py"
 
 # Define the arguments
 FOLDER_ARG="--folder"
-FOLDER_PATH="C:/Users/plame/Documents/__camera__"
+FOLDER_PATH=$1
 OCR_ARG="--ocr"
-OCR_OPTION="easyocr"
+OCR_OPTION=$2
 
 # Run the Python script with arguments
-$PYTHON_EXEC $PYTHON_SCRIPT $FOLDER_ARG $FOLDER_PATH $OCR_ARG $OCR_OPTION
-read -p "Press Enter to continue"
+start $PYTHON_EXEC $PYTHON_SCRIPT $FOLDER_ARG "$FOLDER_PATH" $OCR_ARG "$OCR_OPTION"
+

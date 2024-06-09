@@ -71,25 +71,14 @@ public class CameraService extends BaseService<CameraEntity, CameraOutView, Came
 
     public void startProcess(UUID id, String ocr) throws IOException, InterruptedException {
         CameraEntity entity = getRepository().getReferenceById(id);
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
         String command = System.getProperty("user.dir") + "/api/command.sh";
-        ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", command);
-        System.out.println(processBuilder.command());
-        // Start the process
-        System.out.println("Process is starting....");
+        ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", command, entity.getFolderPath(), ocr);
+
         Process process = processBuilder.start();
-        process.waitFor();
         processes.put(id, process);
-
-
-        System.out.println("Process is working....");
-    }
-
-
-    public void killProcess(UUID id) throws IOException {
-        Process process = processes.get(id);
-        process.destroy();
-        processes.remove(id);
+        Thread.sleep(100);
+        process.destroyForcibly();
     }
 }
 

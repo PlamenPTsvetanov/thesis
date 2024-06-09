@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Blob;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -21,4 +22,10 @@ public class ImageOutView extends BaseOutView {
     private String licensePlateNumber;
 
     private CameraOutView camera;
+
+    private String licensePlateImagePath;
+
+    private String fullImagePath;
+
+    private Timestamp createdOn;
 }

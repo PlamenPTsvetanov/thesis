@@ -30,11 +30,6 @@ public class CameraController extends BaseController<CameraEntity, CameraOutView
         service.startProcess(id, ocr);
     }
 
-    @DeleteMapping("/kill/{id}")
-    public void killProcess(@PathVariable UUID id) throws IOException {
-        service.killProcess(id);
-    }
-
     @Override
     protected BaseService<CameraEntity, CameraOutView, CameraInView> getService() {
         return service;
