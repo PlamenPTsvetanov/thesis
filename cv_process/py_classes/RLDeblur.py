@@ -36,7 +36,7 @@ class RLDeblur:
         # Apply denoising
         denoised = cv2.fastNlMeansDenoisingColored(deconvolved_uint8, None, 10, 10, 7, 21)
 
-        img = Image.fromarray(denoised)
+        img = Image.fromarray(deconvolved_uint8)
 
         new_path = os.path.join(output_path, "_deblur." + format)
 
