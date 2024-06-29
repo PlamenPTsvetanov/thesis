@@ -19,7 +19,7 @@ public class CameraController extends BaseController<CameraEntity, CameraOutView
     private CameraService service;
 
     @PostMapping("/setup")
-    public ResponseEntity<CameraOutView> setupCamera(@RequestBody CameraInView cameraIn) throws ParserConfigurationException, TransformerException {
+    public ResponseEntity<CameraOutView> setupCamera(@RequestBody CameraInView cameraIn) throws Exception {
         CameraOutView payload = service.setup(cameraIn);
 
         return ResponseEntity.ok(payload);

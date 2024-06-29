@@ -26,7 +26,6 @@ import java.util.UUID;
 public class CameraService extends BaseService<CameraEntity, CameraOutView, CameraInView> {
     @Autowired
     private CameraRepository repository;
-    private static final Map<UUID, Process> processes = new HashMap<>();
 
     public CameraService() {
         super(CameraEntity.class, CameraOutView.class);
@@ -39,7 +38,15 @@ public class CameraService extends BaseService<CameraEntity, CameraOutView, Came
 
 
     @Transactional
-    public CameraOutView setup(CameraInView cameraIn) throws ParserConfigurationException, TransformerException {
+    public CameraOutView setup(CameraInView cameraIn) throws Exception {
+        File folder = new File(cameraIn.getFolderPath());
+        folder.mkdirs();
+
+        File config = new File(folder, "camera_config.xml");
+        if (config.exists()) {
+            throw new Exception("Configuration file already exists!");
+        }
+
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.newDocument();
@@ -75,10 +82,7 @@ public class CameraService extends BaseService<CameraEntity, CameraOutView, Came
         String command = System.getProperty("user.dir") + "/api/command.sh";
         ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", command, entity.getFolderPath(), ocr);
 
-        Process process = processBuilder.start();
-        processes.put(id, process);
-        Thread.sleep(100);
-        process.destroyForcibly();
+        processBuilder.start();
     }
 }
 

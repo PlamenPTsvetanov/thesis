@@ -2,7 +2,6 @@ from RecognitionSetup import Setup
 
 from Training import Training
 
-
 class TrainingEngine:
     @staticmethod
     def run():
@@ -18,3 +17,6 @@ class TrainingEngine:
 
 if __name__ == "__main__":
     TrainingEngine.train()
+
+
+

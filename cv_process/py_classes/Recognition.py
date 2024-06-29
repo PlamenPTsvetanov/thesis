@@ -73,7 +73,7 @@ class Recognition:
 
         for idx, box in enumerate(boxes):
             roi = box * [height, width, height, width]
-            region = image[int(roi[0]):int(roi[2]), int(roi[1]):int(roi[3])]
+            region = image[int(roi[0]):int(roi[2]), int(roi[1] * 1.05):int(roi[3])]
 
             text = ocr_function(region)
             return text, region

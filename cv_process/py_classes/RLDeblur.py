@@ -1,6 +1,5 @@
 import os
 
-import cv2
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -10,7 +9,7 @@ from skimage import restoration
 class RLDeblur:
 
     @staticmethod
-    def richardson_lucy_deconv(noisy_channel, psf, num_iter=20):
+    def richardson_lucy_deconv(noisy_channel, psf, num_iter=30):
         return restoration.richardson_lucy(noisy_channel, psf[:, :, 0, 0], num_iter=num_iter)
 
     def deblur(self, path, output_path, format):
@@ -33,12 +32,11 @@ class RLDeblur:
 
         deconvolved_uint8 = (deconvolved_rl[:, :, :3] * 255).astype(np.uint8)
 
-        # Apply denoising
-        denoised = cv2.fastNlMeansDenoisingColored(deconvolved_uint8, None, 10, 10, 7, 21)
-
         img = Image.fromarray(deconvolved_uint8)
 
         new_path = os.path.join(output_path, "_deblur." + format)
 
         img.save(new_path)
         return new_path
+
+

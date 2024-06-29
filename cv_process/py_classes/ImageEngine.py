@@ -47,23 +47,31 @@ class ImageEngine:
             deblurred_path = deblur.deblur(path=image_path, output_path=output_folder, format=img_format)
 
             image_to_scan, detections = recon.scan_image(deblurred_path)
-            text, region = recon.ocr(image_to_scan, detections, 0.8, ocr_func)
 
-            full_image = Image.open(image_path)
-            full_image_path = os.path.join(output_folder, "full_image" + "." + img_format)
-            full_image.save(full_image_path)
+            if detections is not None:
+                text, region = recon.ocr(image_to_scan, detections, 0.8, ocr_func)
 
-            license_plate_image = Image.fromarray(region)
-            license_plate_image_path = os.path.join(output_folder, "license_plate_image" + "." + img_format)
-            license_plate_image.save(license_plate_image_path)
 
-            license_plate_number = text
-            camera_id = camera[0]
+                full_image = Image.open(image_path)
+                full_image_path = os.path.join(output_folder, "full_image" + "." + img_format)
+                full_image.save(full_image_path)
 
-            image = CustomImage(license_plate_number, license_plate_image_path, full_image_path, camera_id)
-            db.update_image(image, id_to_use)
+                license_plate_image_path = "-"
+                if region is not None:
+                    license_plate_image = Image.fromarray(region)
+                    license_plate_image_path = os.path.join(output_folder, "license_plate_image" + "." + img_format)
+                    license_plate_image.save(license_plate_image_path)
 
-            os.remove(image_path)
+                license_plate_number = "No license plate detected!"
+                if text is not None:
+                    license_plate_number = text
+
+                camera_id = camera[0]
+
+                image = CustomImage(license_plate_number, license_plate_image_path, full_image_path, camera_id)
+                db.update_image(image, id_to_use)
+
+                os.remove(image_path)
 
     def cron_worker(self, path, func):
         schedule.every(10).seconds.do(partial(self.recognize, path=path, ocr_func=func))
