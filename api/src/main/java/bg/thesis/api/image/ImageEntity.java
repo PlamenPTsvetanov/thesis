@@ -10,7 +10,7 @@ import java.sql.Blob;
 import java.util.UUID;
 
 @Entity
-@Table(name = "image", schema = "thesis")
+@Table(name = "image")
 @Getter
 @Setter
 public class ImageEntity extends BaseEntity {

@@ -9,7 +9,6 @@ import schedule
 from PIL import Image
 
 from CameraEngine import CameraEngine
-from RLDeblur import RLDeblur
 from Recognition import Recognition
 from database.Database import Database
 from objects.CustomImage import CustomImage
@@ -42,11 +41,8 @@ class ImageEngine:
             os.mkdir(output_folder)
 
             img_format = camera[6]
-            deblur = RLDeblur()
 
-            deblurred_path = deblur.deblur(path=image_path, output_path=output_folder, format=img_format)
-
-            image_to_scan, detections = recon.scan_image(deblurred_path)
+            image_to_scan, detections = recon.scan_image(image_path)
 
             if detections is not None:
                 text, region = recon.ocr(image_to_scan, detections, 0.8, ocr_func)

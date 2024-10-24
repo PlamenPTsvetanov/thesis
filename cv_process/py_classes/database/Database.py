@@ -34,7 +34,7 @@ class Database:
         return conn
 
     def get_camera(self, camera):
-        sql = "select * from thesis.camera where name = '{}' and folder_path = '{}'".format(
+        sql = "select * from camera where name = '{}' and folder_path = '{}'".format(
             camera.name, camera.folder_path
         )
         existing_camera = None
@@ -45,7 +45,7 @@ class Database:
         return existing_camera
 
     def insert_placeholder_image(self, image_path):
-        sql = ("INSERT INTO thesis.image (license_plate_number, license_plate_image_path, full_image_path) "
+        sql = ("INSERT INTO image (license_plate_number, license_plate_image_path, full_image_path) "
                + "VALUES ('-', '-', '{}') RETURNING id".format(image_path))
         with self.connection as conn:
             with conn.cursor() as cursor:
@@ -56,7 +56,7 @@ class Database:
 
     def update_image(self, image, id_to_use):
         sql = (
-                "UPDATE thesis.image SET license_plate_number = '{}', license_plate_image_path = '{}', full_image_path = '{}', camera_id = '{}' where id = '{}'".format(
+                "UPDATE image SET license_plate_number = '{}', license_plate_image_path = '{}', full_image_path = '{}', camera_id = '{}' where id = '{}'".format(
                     image.license_plate_number, image.license_plate_image_path, image.full_image_path, image.camera_id, id_to_use
                 ))
         print(sql)
@@ -66,7 +66,7 @@ class Database:
                 conn.commit()
 
     def image_exists(self, image_path):
-        sql = ("SELECT * FROM thesis.image WHERE full_image_path = '{}'".format(image_path))
+        sql = ("SELECT * FROM image WHERE full_image_path = '{}'".format(image_path))
         with self.connection as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)

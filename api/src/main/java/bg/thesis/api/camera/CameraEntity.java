@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "camera", schema = "thesis")
+@Table(name = "camera")
 @Getter
 @Setter
 public class CameraEntity extends BaseEntity {
